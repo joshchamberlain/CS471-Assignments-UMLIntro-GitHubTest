@@ -55,9 +55,10 @@ public abstract class SortingAlgorithm {
 
     /**
      * Get the display name for this sorting algorithm.
+     * @param language The display language, e.g. English
      * @return The human-readable name of this algorithm.
      */
-    public abstract String getName();
+    public abstract String getName(String language);
 
     /**
      * A hook provided to children to reset any variables if the sample data has been modified without the child
@@ -126,19 +127,32 @@ public abstract class SortingAlgorithm {
     /**
      * Get a human readable message indicating if the data is sorted, and if the sorting was only done by the animation,
      * how long it took to do so.
+     * @param language The display language, such as English.
      * @return A human readable string.
      */
-    public final String getSortedMessage() {
+    public final String getSortedMessage(final String language) {
         if (!mIsSorted) {
             // Not sorted, return empty string
             return "";
         }
         // Sorted, and we know the duration it took to complete the sort
         if (0 != mStopTime && 0 != mStartTime) {
-            return "Sorted in " + getSortDurationMillis() + "ms";
+            switch (language) {
+                case "Spanish":
+                    return "Ordenados en " + getSortDurationMillis() + "ms";
+                case "english":
+                default:
+                    return "Sorted in " + getSortDurationMillis() + "ms";
+            }
         }
         // Sorted, but the time value is invalid (animation was paused, or manually iterated)
-        return "Sorted!";
+        switch (language) {
+            case "Spanish":
+                return "¡Ordenado!";
+            case "english":
+            default:
+                return "Sorted!";
+        }
     }
 
     /**

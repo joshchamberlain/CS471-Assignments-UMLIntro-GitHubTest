@@ -66,6 +66,15 @@ public class Controller implements ISelectionListener, ISortListener, ActionList
     public void updateSampleSize(final int newSize) {
         mModel.updateSampleSize(newSize);
     }
+    /**
+     * Update the display language.
+     * @param language The new language, such as "Spanish".
+     */
+    public void updateLanguage(final String language) {
+        mModel.updateLanguage(language);
+        mViewUpdateListener.onLocalizationChanged(language);
+    }
+
 
     // ==== Methods from ISelectionListener ====
     @Override
