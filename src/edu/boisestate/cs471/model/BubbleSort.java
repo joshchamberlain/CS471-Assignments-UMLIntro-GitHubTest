@@ -16,8 +16,14 @@ public class BubbleSort extends SortingAlgorithm {
     }
 
     @Override
-    public final String getName() {
-        return "Bubble Sort";
+    public final String getName(final String language) {
+        switch (language) {
+            case "Spanish":
+                return "Ordenación de burbuja";
+            case "english":
+            default:
+                return "Bubble Sort";
+        }
     }
 
     @Override

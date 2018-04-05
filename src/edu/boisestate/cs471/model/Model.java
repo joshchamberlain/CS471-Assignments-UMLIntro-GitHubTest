@@ -19,6 +19,8 @@ public final class Model {
     private ISelectionListener mSelectionListener = null;
     /** The number of data samples to use for each sorting algorithm. */
     private int mSampleSize = 25;
+    /** The current translation language. */
+    private String mLanguage = "english";
 
     /**
      * Default constructor.
@@ -151,6 +153,14 @@ public final class Model {
         }
     }
 
+    /**
+     * Set the language used for returning text strings, such as {@link #getSortedMessage()}.
+     * @param language The display language.
+     */
+    public void updateLanguage(final String language) {
+        mLanguage = language;
+    }
+
     // ==== Methods used by the View to render the model. ====
 
     /**
@@ -166,7 +176,7 @@ public final class Model {
      * @return An array of algorithm display names.
      */
     public String[] getAllAlgorithmNames() {
-        final Stream<String> map = mAlgorithms.stream().map(alg -> alg.getName());
+        final Stream<String> map = mAlgorithms.stream().map(alg -> alg.getName(mLanguage));
         return map.toArray(String[]::new);
     }
 
@@ -190,7 +200,7 @@ public final class Model {
      * @return A human readable string.
      */
     public String getSortedMessage() {
-        return getSelectedAlgorithm().getSortedMessage();
+        return getSelectedAlgorithm().getSortedMessage(mLanguage);
     }
     /**
      * Get the number of iterations that have been performed.
@@ -198,6 +208,14 @@ public final class Model {
      */
     public int getIterationCount() {
         return getSelectedAlgorithm().getIterationCount();
+    }
+
+    /**
+     * Get the human readable language currently in use, such as English or Spanish.
+     * @return The name of the current language.
+     */
+    public String getCurrentLanguage() {
+        return mLanguage;
     }
 
     /**

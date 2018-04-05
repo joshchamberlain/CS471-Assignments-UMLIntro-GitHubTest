@@ -6,7 +6,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ItemEvent;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,6 +19,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 
 import edu.boisestate.cs471.controller.Controller;
 import edu.boisestate.cs471.model.Model;
@@ -42,6 +45,11 @@ public class View implements IViewUpdateListener {
     private JLabel mLblIsSorted;
     private JMenu mMenuSettings;
     private JMenuItem mMenuItemSampleCount;
+    private JMenu mMenuLanguage;
+    private JMenuItem mMenuItemEnglish;
+    private JMenuItem mMenuItemSpanish;
+
+
 
     /**
      * Create the application.
@@ -76,10 +84,10 @@ public class View implements IViewUpdateListener {
         mFrame.setIconImage(createImageIcon("/images/ic_trending_up_black_24dp_2x.png").getImage());
 
         final GridBagLayout gridBagLayout = new GridBagLayout();
-        gridBagLayout.columnWidths = new int[] { 0 };
-        gridBagLayout.rowHeights = new int[] { 0, 250, 10, 10, 0 };
-        gridBagLayout.columnWeights = new double[] { 1.0 };
-        gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE, 1.0 };
+        gridBagLayout.columnWidths = new int[] {0};
+        gridBagLayout.rowHeights = new int[] {0, 250, 10, 10, 0};
+        gridBagLayout.columnWeights = new double[] {1.0};
+        gridBagLayout.rowWeights = new double[] {0.0, Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE, 1.0};
         mFrame.getContentPane().setLayout(gridBagLayout);
 
         GridBagConstraints constraints;
@@ -116,10 +124,10 @@ public class View implements IViewUpdateListener {
         // ==== Iteration Count ====
         final JPanel iterationCounter = new JPanel();
         final GridBagLayout iterationCounterLayout = new GridBagLayout();
-        iterationCounterLayout.columnWidths = new int[] { 0, 0, 0 };
-        iterationCounterLayout.rowHeights = new int[] { 0 };
-        iterationCounterLayout.columnWeights = new double[] { Double.MIN_VALUE, Double.MIN_VALUE, 1.0 };
-        iterationCounterLayout.rowWeights = new double[] { 1.0 };
+        iterationCounterLayout.columnWidths = new int[] {0, 0, 0};
+        iterationCounterLayout.rowHeights = new int[] {0};
+        iterationCounterLayout.columnWeights = new double[] {Double.MIN_VALUE, Double.MIN_VALUE, 1.0};
+        iterationCounterLayout.rowWeights = new double[] {1.0};
         iterationCounter.setLayout(iterationCounterLayout);
         mFrame.add(iterationCounter, buildConstraints(2, 0, 2));
 
@@ -133,10 +141,10 @@ public class View implements IViewUpdateListener {
         // ==== Action buttons ====
         final JPanel buttonBar = new JPanel();
         final GridBagLayout buttonBarLayout = new GridBagLayout();
-        buttonBarLayout.columnWidths = new int[] { 0, 0, 0, 0 };
-        buttonBarLayout.rowHeights = new int[] { 10 };
-        buttonBarLayout.columnWeights = new double[] { 1.0, 1.0, 1.0, 1.0 };
-        buttonBarLayout.rowWeights = new double[] { Double.MIN_VALUE };
+        buttonBarLayout.columnWidths = new int[] {0, 0, 0, 0};
+        buttonBarLayout.rowHeights = new int[] {10};
+        buttonBarLayout.columnWeights = new double[] {1.0, 1.0, 1.0, 1.0};
+        buttonBarLayout.rowWeights = new double[] {Double.MIN_VALUE};
         buttonBar.setLayout(buttonBarLayout);
 
         mBtnShuffle = new JButton("", createImageIcon("/images/ic_shuffle_black_24dp_1x.png"));
@@ -166,10 +174,22 @@ public class View implements IViewUpdateListener {
         constraints = buildConstraints(0, 0, 3);
         mFrame.getContentPane().add(buttonBar, constraints);
 
+
         final JMenuBar menuBar = new JMenuBar();
         mMenuSettings = new JMenu("Settings");
         mMenuItemSampleCount = new JMenuItem("Sample Size");
         mMenuSettings.add(mMenuItemSampleCount);
+
+        mMenuLanguage = new JMenu("Language");
+        ButtonGroup languageButtonGroup = new ButtonGroup();
+        mMenuItemEnglish = new JRadioButtonMenuItem("English", true);
+        mMenuLanguage.add(mMenuItemEnglish);
+        languageButtonGroup.add(mMenuItemEnglish);
+
+        mMenuItemSpanish = new JRadioButtonMenuItem("Spanish");
+        mMenuLanguage.add(mMenuItemSpanish);
+        languageButtonGroup.add(mMenuItemSpanish);
+        mMenuSettings.add(mMenuLanguage);
 
         menuBar.add(mMenuSettings);
 
@@ -179,8 +199,18 @@ public class View implements IViewUpdateListener {
 
     private void addMenuListeners() {
         mMenuItemSampleCount.addActionListener(event -> {
-            String userInput = JOptionPane.showInputDialog(mFrame, "Please specify a number from 10 to 100.",
-                    "Sample Size", JOptionPane.QUESTION_MESSAGE);
+            String userInput = null;
+            switch (mController.getModel().getCurrentLanguage()) {
+                case "Spanish":
+                    userInput = JOptionPane.showInputDialog(mFrame, "Por favor, especifique un número del 10 al 100.",
+                            "Tamaño de la muestra", JOptionPane.QUESTION_MESSAGE);
+                    break;
+                case "english":
+                default:
+                    userInput = JOptionPane.showInputDialog(mFrame, "Please specify a number from 10 to 100.",
+                            "Sample Size", JOptionPane.QUESTION_MESSAGE);
+                    break;
+            }
             if (null == userInput) {
                 // User canceled
                 return;
@@ -194,14 +224,38 @@ public class View implements IViewUpdateListener {
                 newSize = -1;
             }
             if (newSize < 10 || newSize > 100) {
-                JOptionPane.showMessageDialog(null, "Please specify a number from 10 to 100.", "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
+                switch (mController.getModel().getCurrentLanguage()) {
+                    case "Spanish":
+                        JOptionPane.showMessageDialog(null, "Por favor, especifique un número del 10 al 100.",
+                                "Entrada Inválida", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case "english":
+                    default:
+                        JOptionPane.showMessageDialog(null, "Please specify a number from 10 to 100.", "Invalid Input",
+                                JOptionPane.ERROR_MESSAGE);
+                        break;
+                }
 
             }
             else {
                 mController.updateSampleSize(newSize);
             }
         });
+
+        mMenuItemEnglish.addItemListener((ItemEvent e) -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                System.out.println("Selected English");
+                mController.updateLanguage("english");
+            }
+        });
+
+        mMenuItemSpanish.addItemListener((ItemEvent e) -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                System.out.println("Selected Spanish");
+                mController.updateLanguage("Spanish");
+            }
+        });
+
     }
 
     private void setDynamicText() {
@@ -217,12 +271,45 @@ public class View implements IViewUpdateListener {
         mFrame.repaint();
     }
 
+    private void setMenuText(final String newLanguage) {
+        switch (newLanguage) {
+            case "Spanish":
+                mMenuSettings.setText("Configuraciones");
+                mMenuItemSampleCount.setText("Tamaño de la muestra");
+                mMenuLanguage.setText("Idioma");
+                mMenuItemEnglish.setText("Inglés");
+                mMenuItemSpanish.setText("Español");
+                break;
+            case "English":
+            default:
+                mMenuSettings.setText("Settings");
+                mMenuItemSampleCount.setText("Sample size");
+                mMenuLanguage.setText("Language");
+                mMenuItemEnglish.setText("English");
+                mMenuItemSpanish.setText("Spanish");
+                break;
+        }
+    }
+
     private void setButtonStates() {
         mBtnIterate.setEnabled(mController.getModel().isIterateEnabled());
         mBtnPause.setEnabled(mController.getModel().isPauseEnabled());
         mBtnPlay.setEnabled(mController.getModel().isPlayEnabled());
         mFrame.repaint();
     }
+
+    private void setStaticLabels(final String language) {
+        switch (language) {
+            case "Spanish":
+                mLblIterationCounter.setText("Iteración:");
+                break;
+            case "english":
+            default:
+                mLblIterationCounter.setText("Iteration: ");
+                break;
+        }
+    }
+
 
     private GridBagConstraints buildConstraints(final int offset, final int gridX, final int gridY) {
         final GridBagConstraints ret = new GridBagConstraints();
@@ -254,6 +341,13 @@ public class View implements IViewUpdateListener {
     @Override
     public void onDynamicTextChanged() {
         setDynamicText();
+    }
+
+    @Override
+    public void onLocalizationChanged(final String newLanguage) {
+        setDynamicText();
+        setMenuText(newLanguage);
+        setStaticLabels(newLanguage);
     }
 
     @Override

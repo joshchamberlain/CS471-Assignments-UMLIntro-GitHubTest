@@ -16,8 +16,14 @@ public class SelectionSort extends SortingAlgorithm {
     }
 
     @Override
-    public final String getName() {
-        return "Selection Sort";
+    public final String getName(final String language) {
+        switch (language) {
+            case "Spanish":
+                return "Ordenamiento por selección";
+            case "english":
+            default:
+                return "Selection Sort";
+        }
     }
 
     @Override

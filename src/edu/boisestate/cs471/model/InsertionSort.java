@@ -17,8 +17,14 @@ public class InsertionSort extends SortingAlgorithm {
     }
 
     @Override
-    public final String getName() {
-        return "Insertion Sort";
+    public final String getName(final String language) {
+        switch (language) {
+            case "Spanish":
+                return "Ordenamiento por inserción";
+            case "english":
+            default:
+                return "Insertion Sort";
+        }
     }
 
     @Override

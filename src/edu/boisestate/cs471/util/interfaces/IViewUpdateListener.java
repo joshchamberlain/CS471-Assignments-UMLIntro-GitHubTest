@@ -14,6 +14,12 @@ public interface IViewUpdateListener {
     void onDynamicTextChanged();
 
     /**
+     * Callback indicating the localized language was updated, meaning all text needs to be updated.
+     * @param newLanguage The new localized language.
+     */
+    void onLocalizationChanged(String newLanguage);
+
+    /**
      * Callback indicating the enable/disable state of the animation buttons has changed.
      */
     void onButtonsChanged();
