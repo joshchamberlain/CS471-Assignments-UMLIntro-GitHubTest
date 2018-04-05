@@ -27,6 +27,8 @@ public final class Model {
         // Instantiate all sorting algorithms.
         mAlgorithms = new ArrayList<>();
         mAlgorithms.add(new BubbleSort(mSampleSize));
+        mAlgorithms.add(new SelectionSort(mSampleSize));
+        mAlgorithms.add(new InsertionSort(mSampleSize));
     }
 
     /**
