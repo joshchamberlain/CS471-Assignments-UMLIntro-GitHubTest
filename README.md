@@ -32,6 +32,10 @@ Click the dropdown on the toolbar to click the configuration to launch the progr
 
 ![RunConfiguration](./doc/screenshots/eclipse-run-program.jpg)
 
+Once the program is ran successfully, you should see a window similar to the following:
+
+![Screenshot](./doc/screenshots/bubble-sort.png)
+
 ## Documentation
 ### JavaDoc
 You can build the JavaDoc using complicated options in Eclipse, or simply run the provided ant script ([javadoc.xml](./javadoc.xml)) using:
