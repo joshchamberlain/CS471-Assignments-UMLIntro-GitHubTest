@@ -42,8 +42,8 @@ public abstract class SortingAlgorithm {
     private Timer mAnimation;
     /** Multi-thread lock to prevent race conditions with {@link #startAnimation()} and {@link #stopAnimation()}. */
     private final Object mAnimationLock = new Object();
-    /** A collection of listeners that should be notified when this algorithm changes. */
-    private List<ISortListener> mListeners = new ArrayList<>();
+    /** A listener to update about with changes when sorting data. */
+    private ISortListener mListener = null;
 
     /**
      * Instantiate a sorting algorithm with a given sample count.
@@ -81,7 +81,7 @@ public abstract class SortingAlgorithm {
      * @see ISortListener
      */
     public void registerListener(final ISortListener listener) {
-        mListeners.add(listener);
+        mListener = listener;
     }
     /**
      * Unregister a previously registered listener.
@@ -89,7 +89,7 @@ public abstract class SortingAlgorithm {
      * @see #registerListener(ISortListener)
      */
     public void unregisterListener(final ISortListener listener) {
-        mListeners.remove(listener);
+        mListener = null;
     }
 
     /**
@@ -310,7 +310,9 @@ public abstract class SortingAlgorithm {
         if (isSorted != mIsSorted) {
             mStopTime = System.currentTimeMillis();
             mIsSorted = isSorted;
-            mListeners.forEach(listener -> listener.onSortStatusChanged(this, mIsSorted));
+            if (null != mListener) {
+                mListener.onSortStatusChanged(this, mIsSorted);
+            }
         }
     }
 
@@ -318,20 +320,26 @@ public abstract class SortingAlgorithm {
      * Notify any listeners that the enable/disable state of the buttons should be updated.
      */
     private void signalButtonStateChanged() {
-        mListeners.forEach(listener -> listener.onButtonStateChange(this));
+        if (null != mListener) {
+            mListener.onButtonStateChange(this);
+        }
     }
 
     /**
      * Notify any listeners that data in {@link #mData} and/or {@link #mColors} has changed.
      */
     private void signalDataChanged() {
-        mListeners.forEach(listener -> listener.onDataChanged(this));
+        if (null != mListener) {
+            mListener.onDataChanged(this);
+        }
     }
 
     /**
      * Notify any listeners that the number of elements in {@link #mData} and {@link #mColors} has changed.
      */
     private void signalDataCountChanged() {
-        mListeners.forEach(listener -> listener.onDataSizeChanged(this, mData.length));
+        if (null != mListener) {
+            mListener.onDataSizeChanged(this, mData.length);
+        }
     }
 }
