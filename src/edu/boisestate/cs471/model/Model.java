@@ -3,7 +3,6 @@ package edu.boisestate.cs471.model;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import edu.boisestate.cs471.util.interfaces.ISelectionListener;
 
@@ -176,8 +175,11 @@ public final class Model {
      * @return An array of algorithm display names.
      */
     public String[] getAllAlgorithmNames() {
-        final Stream<String> map = mAlgorithms.stream().map(alg -> alg.getName(mLanguage));
-        return map.toArray(String[]::new);
+        String namesArray[] = new String[mAlgorithms.size()];
+        for (int i = 0; i < mAlgorithms.size(); i++) {
+            namesArray[i] = mAlgorithms.get(i).getName(mLanguage);
+        }
+        return namesArray;
     }
 
     /**
