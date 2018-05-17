@@ -36,4 +36,9 @@ public interface IViewUpdateListener {
      * @see Model#getDataColors()
      */
     void onSortDataUpdated();
+    
+    /**
+     * Callback indicating the dialog should be opened for changing the sample size.
+     */
+    void showSampleSizeDialog();
 }

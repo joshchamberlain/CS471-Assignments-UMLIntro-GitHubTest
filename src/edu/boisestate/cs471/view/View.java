@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ItemEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -24,7 +23,7 @@ import javax.swing.JRadioButtonMenuItem;
 import edu.boisestate.cs471.controller.Controller;
 import edu.boisestate.cs471.model.Model;
 import edu.boisestate.cs471.util.ComboBoxModelWrapper;
-import edu.boisestate.cs471.util.UserCommand;
+import edu.boisestate.cs471.util.EventType;
 import edu.boisestate.cs471.util.interfaces.IViewUpdateListener;
 
 public class View implements IViewUpdateListener {
@@ -63,7 +62,7 @@ public class View implements IViewUpdateListener {
         setButtonStates();
 
         mController.registerListener(this);
-        addMenuListeners();
+        initGuiListener(mController.getGuiListener());
     }
 
     /**
@@ -99,21 +98,16 @@ public class View implements IViewUpdateListener {
 
         mBtnPrevious = new JButton("", createImageIcon("/images/ic_navigate_before_black_24dp_1x.png"));
         mBtnPrevious.setFocusable(false);
-        mBtnPrevious.setActionCommand(UserCommand.SELECT_PREVIOUS.toString());
-        mBtnPrevious.addActionListener(mController);
         navigationPanel.add(mBtnPrevious, BorderLayout.WEST);
 
         mBtnNext = new JButton("", createImageIcon("/images/ic_navigate_next_black_24dp_1x.png"));
         mBtnNext.setFocusable(false);
-        mBtnNext.setActionCommand(UserCommand.SELECT_NEXT.toString());
-        mBtnNext.addActionListener(mController);
         navigationPanel.add(mBtnNext, BorderLayout.EAST);
 
         mAlgorithmSelect = new JComboBox<String>();
         mAlgorithmChoices = new ComboBoxModelWrapper<>(mController.getModel().getAllAlgorithmNames());
         mAlgorithmSelect.setModel(mAlgorithmChoices);
-        mAlgorithmSelect.setActionCommand(UserCommand.SELECT_COMBO_BOX.toString());
-        mAlgorithmSelect.addActionListener(mController);
+        
         navigationPanel.add(mAlgorithmSelect, BorderLayout.CENTER);
 
         mVisualizer = new Visualizer();
@@ -148,26 +142,18 @@ public class View implements IViewUpdateListener {
         buttonBar.setLayout(buttonBarLayout);
 
         mBtnShuffle = new JButton("", createImageIcon("/images/ic_shuffle_black_24dp_1x.png"));
-        mBtnShuffle.setActionCommand(UserCommand.RANDOMIZE.toString());
-        mBtnShuffle.addActionListener(mController);
         constraints = buildConstraints(2, 0, 0);
         buttonBar.add(mBtnShuffle, constraints);
 
         mBtnPause = new JButton("", createImageIcon("/images/ic_pause_black_24dp_1x.png"));
-        mBtnPause.setActionCommand(UserCommand.PAUSE.toString());
-        mBtnPause.addActionListener(mController);
         constraints = buildConstraints(2, 1, 0);
         buttonBar.add(mBtnPause, constraints);
 
         mBtnPlay = new JButton("", createImageIcon("/images/ic_play_arrow_black_24dp_1x.png"));
-        mBtnPlay.setActionCommand(UserCommand.PLAY.toString());
-        mBtnPlay.addActionListener(mController);
         constraints = buildConstraints(2, 2, 0);
         buttonBar.add(mBtnPlay, constraints);
 
         mBtnIterate = new JButton("", createImageIcon("/images/ic_skip_next_black_24dp_1x.png"));
-        mBtnIterate.setActionCommand(UserCommand.ITERATE.toString());
-        mBtnIterate.addActionListener(mController);
         constraints = buildConstraints(2, 3, 0);
         buttonBar.add(mBtnIterate, constraints);
 
@@ -197,65 +183,22 @@ public class View implements IViewUpdateListener {
         mFrame.pack();
     }
 
-    private void addMenuListeners() {
-        mMenuItemSampleCount.addActionListener(event -> {
-            String userInput = null;
-            switch (mController.getModel().getCurrentLanguage()) {
-                case "Spanish":
-                    userInput = JOptionPane.showInputDialog(mFrame, "Por favor, especifique un número del 10 al 100.",
-                            "Tamaño de la muestra", JOptionPane.QUESTION_MESSAGE);
-                    break;
-                case "english":
-                default:
-                    userInput = JOptionPane.showInputDialog(mFrame, "Please specify a number from 10 to 100.",
-                            "Sample Size", JOptionPane.QUESTION_MESSAGE);
-                    break;
-            }
-            if (null == userInput) {
-                // User canceled
-                return;
-            }
-
-            int newSize;
-            try {
-                newSize = Integer.parseInt(userInput);
-            }
-            catch (final NumberFormatException e) {
-                newSize = -1;
-            }
-            if (newSize < 10 || newSize > 100) {
-                switch (mController.getModel().getCurrentLanguage()) {
-                    case "Spanish":
-                        JOptionPane.showMessageDialog(null, "Por favor, especifique un número del 10 al 100.",
-                                "Entrada Inválida", JOptionPane.ERROR_MESSAGE);
-                        break;
-                    case "english":
-                    default:
-                        JOptionPane.showMessageDialog(null, "Please specify a number from 10 to 100.", "Invalid Input",
-                                JOptionPane.ERROR_MESSAGE);
-                        break;
-                }
-
-            }
-            else {
-                mController.updateSampleSize(newSize);
-            }
-        });
-
-        mMenuItemEnglish.addItemListener((ItemEvent e) -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                System.out.println("Selected English");
-                mController.updateLanguage("english");
-            }
-        });
-
-        mMenuItemSpanish.addItemListener((ItemEvent e) -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                System.out.println("Selected Spanish");
-                mController.updateLanguage("Spanish");
-            }
-        });
-
+    private void initGuiListener(final GuiListener guiListener) {
+        // Buttons
+        guiListener.listenTo(mBtnPrevious, EventType.GUI_CLICK_PREVIOUS);
+        guiListener.listenTo(mBtnNext, EventType.GUI_CLICK_NEXT);
+        guiListener.listenTo(mBtnShuffle, EventType.GUI_CLICK_RANDOMIZE);
+        guiListener.listenTo(mBtnIterate, EventType.GUI_CLICK_ITERATE);
+        guiListener.listenTo(mBtnPlay, EventType.GUI_CLICK_PLAY);
+        guiListener.listenTo(mBtnPause, EventType.GUI_CLICK_PAUSE);
+        
+        // Menu items
+        guiListener.listenTo(mMenuItemSampleCount, EventType.GUI_DIALOG_SAMPLE_SIZE);
+        guiListener.listenTo(mMenuItemEnglish, EventType.GUI_SET_LANGUAGE, "English");
+        guiListener.listenTo(mMenuItemSpanish, EventType.GUI_SET_LANGUAGE, "Spanish");
+        
+        // Combo Boxes
+        guiListener.listenToComboBoxIndex(mAlgorithmSelect, EventType.GUI_SELECT_ALGORITHM_INDEX);
     }
 
     private void setDynamicText() {
@@ -369,6 +312,52 @@ public class View implements IViewUpdateListener {
         mVisualizer.updateData(model.getDataValues(), model.getDataColors());
         mLblIterationCounterNumber.setText(String.valueOf(model.getIterationCount()));
         mFrame.repaint();
+    }
+
+    @Override
+    public void showSampleSizeDialog() {
+        // TODO Auto-generated method stub
+        String userInput = null;
+        switch (mController.getModel().getCurrentLanguage()) {
+            case "Spanish":
+                userInput = JOptionPane.showInputDialog(mFrame, "Por favor, especifique un número del 10 al 100.",
+                        "Tamaño de la muestra", JOptionPane.QUESTION_MESSAGE);
+                break;
+            case "english":
+            default:
+                userInput = JOptionPane.showInputDialog(mFrame, "Please specify a number from 10 to 100.",
+                        "Sample Size", JOptionPane.QUESTION_MESSAGE);
+                break;
+        }
+        if (null == userInput) {
+            // User canceled
+            return;
+        }
+
+        int newSize;
+        try {
+            newSize = Integer.parseInt(userInput);
+        }
+        catch (final NumberFormatException e) {
+            newSize = -1;
+        }
+        if (newSize < 10 || newSize > 100) {
+            switch (mController.getModel().getCurrentLanguage()) {
+                case "Spanish":
+                    JOptionPane.showMessageDialog(null, "Por favor, especifique un número del 10 al 100.",
+                            "Entrada Inválida", JOptionPane.ERROR_MESSAGE);
+                    break;
+                case "english":
+                default:
+                    JOptionPane.showMessageDialog(null, "Please specify a number from 10 to 100.", "Invalid Input",
+                            JOptionPane.ERROR_MESSAGE);
+                    break;
+            }
+
+        }
+        else {
+            mController.updateSampleSize(newSize);
+        }
     }
 
 }

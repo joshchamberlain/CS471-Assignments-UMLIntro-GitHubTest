@@ -1,16 +1,15 @@
 package edu.boisestate.cs471.controller;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JComboBox;
 
 import edu.boisestate.cs471.model.Model;
 import edu.boisestate.cs471.model.SortingAlgorithm;
-import edu.boisestate.cs471.util.UserCommand;
+import edu.boisestate.cs471.util.EventType;
+import edu.boisestate.cs471.util.interfaces.IEventReceiver;
 import edu.boisestate.cs471.util.interfaces.ISelectionListener;
 import edu.boisestate.cs471.util.interfaces.ISortListener;
 import edu.boisestate.cs471.util.interfaces.IViewUpdateListener;
+import edu.boisestate.cs471.view.GuiListener;
 
 /**
  * The Controller portion of a Model-View-Controller architecture.
@@ -25,11 +24,13 @@ import edu.boisestate.cs471.util.interfaces.IViewUpdateListener;
  * instance to be the 'selected' instance, and an {@link ISortListener} to listen to changes in the selected algorithm's
  * sorting data that may need to be relayed on to the View.</p>
  */
-public class Controller implements ISelectionListener, ISortListener, ActionListener {
+public class Controller implements ISelectionListener, ISortListener, IEventReceiver {
     /** The Model of this model-view-controller. */
     private final Model mModel;
     /** A listener registered by the View to know when to redraw. */
     private IViewUpdateListener mViewUpdateListener;
+    /** A GUI listener that is created only when requested. It will forward requests to this controller. */
+    private GuiListener mGuiListener;
 
     /**
      * Instantiate a controller for manipulating a given model.
@@ -46,6 +47,13 @@ public class Controller implements ISelectionListener, ISortListener, ActionList
      */
     public final Model getModel() {
         return mModel;
+    }
+    
+    public final GuiListener getGuiListener() {
+        if (null == mGuiListener) {
+            mGuiListener = new GuiListener(this);
+        }
+        return mGuiListener;
     }
     /**
      * Register for updates that should result in updating the view presented to the user.
@@ -122,56 +130,41 @@ public class Controller implements ISelectionListener, ISortListener, ActionList
         }
     }
 
-    // Handle user input forwarded from View
-
     @Override
-    public void actionPerformed(final ActionEvent e) {
-        String command = e.getActionCommand();
-        UserCommand asEnum;
-        try {
-            asEnum = UserCommand.valueOf(command);
-        }
-        catch (IllegalArgumentException ex) {
-            System.out.println("Warning: Ignoring unexpected command value " + e.getActionCommand());
-            return;
-        }
-
-        switch (asEnum) {
-            case PLAY:
-                mModel.startAnimation();
-                break;
-            case PAUSE:
-                mModel.stopAnimation();
-                break;
-            case ITERATE:
-                mModel.iterateSort();
-                break;
-            case RANDOMIZE:
-                mModel.randomize();
-                break;
-            case SELECT_NEXT:
+    public void onEvent(EventType type, Object... args) {
+        switch (type) {
+            case GUI_CLICK_NEXT:
                 mModel.selectNext();
                 break;
-            case SELECT_PREVIOUS:
+            case GUI_CLICK_PREVIOUS:
                 mModel.selectPrevious();
                 break;
-            case SELECT_COMBO_BOX:
-                JComboBox<?> combo;
-                try {
-                    combo = (JComboBox<?>) e.getSource();
-                }
-                catch (ClassCastException ex) {
-                    System.out.println("Received a " + UserCommand.SELECT_COMBO_BOX +
-                            " command from something other than a combo box. Ignoring command.");
-                    break;
-                }
-                int newIndex = combo.getSelectedIndex();
+            case GUI_SELECT_ALGORITHM_INDEX:
+                Integer newIndex = (Integer) args[0];
                 if (newIndex != mModel.getSelectedIndex()) {
                     mModel.selectIndex(newIndex);
                 }
                 break;
-            default:
-                System.out.println("Unhandled command type " + asEnum);
+            case GUI_CLICK_PAUSE:
+                mModel.stopAnimation();
+                break;
+            case GUI_CLICK_PLAY:
+                mModel.startAnimation();
+                break;
+            case GUI_CLICK_ITERATE:
+                mModel.iterateSort();
+                break;
+            case GUI_CLICK_RANDOMIZE:
+                mModel.randomize();
+                break;
+            case GUI_SET_LANGUAGE:
+                String language = (String) args[0];
+                System.out.println("Set language to " + language);
+                mModel.updateLanguage(language);
+                mViewUpdateListener.onLocalizationChanged(language);
+                break;
+            case GUI_DIALOG_SAMPLE_SIZE:
+                mViewUpdateListener.showSampleSizeDialog();
                 break;
         }
     }
