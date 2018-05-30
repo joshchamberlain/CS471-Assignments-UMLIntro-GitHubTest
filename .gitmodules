@@ -1,0 +1,3 @@
+[submodule "private/git-exporter"]
+	path = private/git-exporter
+	url = git@github.com:BoiseState/jc-git-exporter.git
