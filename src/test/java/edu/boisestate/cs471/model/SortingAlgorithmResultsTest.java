@@ -18,6 +18,7 @@ public class SortingAlgorithmResultsTest {
         fail("Not yet implemented"); // TODO
     }
 
+    @Test
     public final void testBubbleSort() {
         int n = 10;
         BubbleSort sort = new BubbleSort(10);
