@@ -20,16 +20,18 @@ public class SortingAlgorithmResultsTest {
 
     @Test
     public final void testBubbleSort() {
+        System.out.println("Start of test");
         int n = 10;
         BubbleSort sort = new BubbleSort(10);
         sort.randomize();
         for (int i = 0; i < (n*n); i++) {
-            sort.doSortIteration();
-            if (sort.isSorted()) {
-                break;
+            System.out.println("Iteration " + i);
+            boolean isSorted = sort.doSortIteration();
+            if (isSorted) {
+                return;
             }
         }
-        assertTrue(sort.isSorted());
+        fail("Sorting never completed");
     }
 
 }
