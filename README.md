@@ -1,5 +1,3 @@
-*BUMP to trigger CI*
-
 # CS471-Assignments-UMLSorting
 This Java GUI application visualizes various sorting algorithms.
 
