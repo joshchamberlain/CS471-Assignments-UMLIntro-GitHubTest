@@ -7,7 +7,7 @@ branches:
         - gh-pages
 
 install:
-  - echo "JCT ::: TRACE"
+    - sh: echo "JCT ::: TRACE"
 
 build_script:
   - mvn clean compile --batch-mode -DskipTest
