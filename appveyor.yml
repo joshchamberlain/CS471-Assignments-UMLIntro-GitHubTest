@@ -8,8 +8,7 @@ build_script:
   - mvn clean compile --batch-mode -DskipTest
 
 test_script:
-  - Write-Host "JCT ::: TRACE"
-  - mvn clean test --batch-mode
+    - echo "JCT ::: TRACE" && mvn clean test --batch-mode
 
 cache:
   - C:\Users\appveyor\.m2
