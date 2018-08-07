@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/joshchamberlain/CS471-Assignments-UMLIntro-GitHubTest.svg?branch=master)](https://travis-ci.com/joshchamberlain/CS471-Assignments-UMLIntro-GitHubTest)
+
 # CS471-Assignments-UMLSorting
 This Java GUI application visualizes various sorting algorithms.
 
