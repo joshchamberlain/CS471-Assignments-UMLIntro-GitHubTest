@@ -15,8 +15,8 @@ install:
   # batch commands start from cmd:
   - cmd: echo This is batch again
   - cmd: set MY_VAR=12345         
-  - cmd: echo 'JCT ::: CMD %MY_VAR%'
-  - sh: echo 'JCT ::: SH $MY_VAR'
+  - cmd: echo "JCT CMD %MY_VAR%"
+  - sh: echo "JCT SH $MY_VAR"
   - ps: $MY_VAR
   - ps: $APPVEYOR_BUILD_FOLDER
   - ps: $APPVEYOR_JOB_ID
@@ -32,4 +32,5 @@ on_finish:
 
 cache:
   - C:\Users\appveyor\.m2
+
 
