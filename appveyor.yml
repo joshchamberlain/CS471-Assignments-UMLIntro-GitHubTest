@@ -15,12 +15,17 @@ install:
   # batch commands start from cmd:
   - cmd: echo This is batch again
   - cmd: set MY_VAR=12345         
+  - echo $APPVEYOR_BUILD_FOLDER
+  - echo $APPVEYOR_JOB_ID
 
 build_script:
   - mvn clean compile --batch-mode -DskipTest
 
 test_script:
     - mvn clean test --batch-mode
+
+on_finish:
+  - ps: Write-Host 'This is PowerShell'
 
 cache:
   - C:\Users\appveyor\.m2
