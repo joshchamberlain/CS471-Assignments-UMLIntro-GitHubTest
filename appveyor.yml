@@ -1,0 +1,16 @@
+version: '{build}'
+
+branches:
+    except:
+        - gh-pages
+
+build_script:
+  - mvn clean compile --batch-mode -DskipTest
+
+test_script:
+  - mvn clean test --batch-mode
+
+cache:
+  - C:\Users\appveyor\.m2    
+  - C:\maven\
+
