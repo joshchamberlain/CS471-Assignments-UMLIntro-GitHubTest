@@ -1,13 +1,20 @@
 version: '{build}'
 
-image: ubuntu
 
 branches:
     except:
         - gh-pages
 
+
+# scripts that run after cloning repository
 install:
-    - sh: echo "JCT ::: TRACE"
+  # by default, all script lines are interpreted as batch
+  - echo This is batch
+  # to run script as a PowerShell command prepend it with ps:
+  - ps: Write-Host 'This is PowerShell'
+  # batch commands start from cmd:
+  - cmd: echo This is batch again
+  - cmd: set MY_VAR=12345         
 
 build_script:
   - mvn clean compile --batch-mode -DskipTest
