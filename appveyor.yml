@@ -17,15 +17,12 @@ build_script:
   - mvn clean compile --batch-mode -DskipTest
 
 test_script:
-    - sh: mvn clean test --batch-mode || echo "There were test failures" >&2
-
-after_test:
-  - cmd: echo "%APPVEYOR_BUILD_FOLDER%"
-  - ps: $wc = New-Object 'System.Net.WebClient'
-  - ps: $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\target\surefire-reports\TEST-edu.boisestate.cs471.model.SortingAlgorithmResultsTest.xml))
+    - mvn clean test --batch-mode
 
 on_finish:
-  - ps: Write-Host 'This is PowerShell'
+  - cmd: echo "Uploading test report"
+  - ps: $wc = New-Object 'System.Net.WebClient'
+  - ps: $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\target\surefire-reports\TEST-edu.boisestate.cs471.model.SortingAlgorithmResultsTest.xml))
 
 cache:
   - C:\Users\appveyor\.m2
