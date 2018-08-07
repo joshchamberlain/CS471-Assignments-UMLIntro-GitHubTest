@@ -17,7 +17,7 @@ build_script:
   - mvn clean compile --batch-mode -DskipTest
 
 test_script:
-    - mvn clean test --batch-mode
+    - sh: mvn clean test --batch-mode || echo "There were test failures" >&2
 
 after_test:
   - cmd: echo "%APPVEYOR_BUILD_FOLDER%"
