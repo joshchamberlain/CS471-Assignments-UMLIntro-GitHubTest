@@ -24,7 +24,7 @@ before_script:
   - ./cc-test-reporter before-build 
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.login=${SONAR_TOKEN}
     #  - mvn clean compile
     #  - mvn test || echo "There were failed tests"
     #  - mvn site sonar:sonar -DskipTests
