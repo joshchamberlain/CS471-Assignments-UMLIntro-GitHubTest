@@ -28,3 +28,15 @@ after_script:
   - cd src/main/java
   - ./cc-test-reporter after-build
 
+before_deploy:
+  - mvn package -DskipTests
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: ebdHFTelu7VUWF+W+mH8KVh0kc+Po2xhnU+V6O8/MnR5waU9O5IizuK2PyE3tfL2q0S39FBvp2dNEDkPifWXBBuQqAqDdKkzoJHpvmNFhtRK0txNL6oQN0kNXQg2JURXX9IpleCjhvN+pXZvaqgN4/MgETJElW+mygK4SEnY4pgxmxvj07f69jOG1X+5X8QMTL6pjowJir7L4d0FTgtC7iHcWkwca4ii3eZncVIAlUoffkUzg7pFxcQiX/pnC57HPmUk4kKoadZS25C5AInsi0iHjNLQO/IlBmoC+4uwD5Oh2LqeW7qA7epvSqpJJw9kemT6/raC0UHHjZERsY6f2NUsTjaUF/RtM4z4iOq3CpCE/HITtcvte5ZYoJyoLnEpQqEJb9D+sft3vGB6QKEXKIiLMX84zjEJgYNkxyGsmNqIM4/HQAeL3ThdbLJ6mj8RUUzXEqM6UrpRkomABF5fz+LZiAtVCNNwyVsJRhSA+Oj9yXBOp77RAfJOT1WmPXhj4yXH9f3zwKibQ1ujyPSF2dBll24p4BLnRZY0xH7VxSpXnEUAxkLj2h5+ScsWFxAqw0oKGYEIFpjhxOLqbyZq2d+uDs+Hn5e0Os/Kjh0KZHoZtEzwv09SHi36H5/v7iUgAE5gZ4uRDSfn+4tbLFAs8OK9rrZYD3gqihVfzwmOPRo=
+  file: target/sorting-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+  on:
+    tags: true
+    repo: joshchamberlain/CS471-Assignments-UMLIntro-GitHubTest
