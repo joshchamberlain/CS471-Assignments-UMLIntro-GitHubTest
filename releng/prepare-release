@@ -40,7 +40,7 @@ fi
 VERSION=$($GET_VERSION_SCRIPT)
 TAG="v$VERSION"
 echo "Version $VERSION -> Tag $TAG"
-echo "Creating tag with `git tag $TAG`"
+echo "Creating tag with \`git tag $TAG\`"
 
 git tag $TAG
 
