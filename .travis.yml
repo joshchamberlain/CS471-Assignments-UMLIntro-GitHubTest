@@ -11,24 +11,16 @@ jdk:
 notifications:
     email: false
 
-addons:
-  sonarcloud:
-    organization: "joshchamberlain-github"
-    token:
-      secure: "Nw18mhrO9Sbm4muBesDw/fyzJKIerCfOyk7TpPyuJbwp5fA9JTbvvAsUuPCZjUEAj3k5AFEn4QpcqbxnLhlaMyRWo88iD4fnB4DDFu2JpHaIn5Gt4pRV1XzTMEppg1BS+F31OvxfK2dVLj4AnYs/ACjSJGo4slF2c+THe+PsI6IC7N/8kQXcsa56Kust4ckwucEay+lB0w+MMUJhe/NymFJ/H505gy0nUofn4m1bF336V85mR5po8lupiDh4QkgSFBwTiJsAstO64p5qUjmIWciMqXdruS6IOfuUbtkK2mw+3IYALlVVO/zsTldedR8+726isKPSpL4rl5AYL5iDZ6hdYoUx1Zw5F9FcZSQH7v0ybEBd1IqdmcIQYY/FnH7H6Ff+YXDfBly9mW3jLk5RklIvlI1ge1wVcQmUD6Pg0dA6oDAZB3sBSKLBIvV6pU5X6Ptenj3jdZPDL2SmVnt5EOvIB8kTgUIS0pjU//vaxW8eUbkcIn1+/7yUSMdScmZmOq9ZyL3ItgQBvdjo17qd0e3Y+A/s4YwULkRQNvuQAhTA4HrZeQ4QaY8jV7NlLk5WewzHiVmCIqym51nuIuXkrsWqDUow/IGbM7AQ0GKtET+PJGQOkzdwS9qqjiK2v00wgR1hi1RYNGpDCwCIbDBF41aFtWvVywRcDNa8C1QS1Vw="
-
-
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build 
 
 script:
-    - echo "Token: ${SONAR_TOKEN}"
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.login=${SONAR_TOKEN}
-    #  - mvn clean compile
-    #  - mvn test || echo "There were failed tests"
-    #  - mvn site sonar:sonar -DskipTests
+    #    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Dsonar.login=${SONAR_TOKEN}
+    - mvn clean compile
+    - mvn test || echo "There were failed tests"
+    - mvn site sonar:sonar -Dsonar.organization=joshchamberlain-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_LOGIN -DskipTests
 
 after_script:
   - cp ./target/site/jacoco/jacoco.xml ./src/main/java
